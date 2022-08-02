@@ -36,11 +36,10 @@ func main() {
 	if portNumber == "" {
 		portNumber = "8081"
 	}
-	portNumber = ":" + portNumber
 	log.Debugln("Starting Server on Port ", portNumber)
 	fmt.Println("Starting Server on Port", portNumber)
-
-	log.Fatal(http.ListenAndServe(":8080", r))
+	err = http.ListenAndServe(":"+portNumber, r)
+	log.Fatal(err)
 }
 
 func testHandler(w http.ResponseWriter, r *http.Request) {
