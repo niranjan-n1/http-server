@@ -38,8 +38,7 @@ func main() {
 	}
 	log.Debugln("Starting Server on Port ", portNumber)
 	fmt.Println("Starting Server on Port", portNumber)
-	err = http.ListenAndServe(":"+portNumber, r)
-	log.Fatal(err)
+	log.Fatal(http.ListenAndServe(":"+portNumber, r))
 }
 
 func testHandler(w http.ResponseWriter, r *http.Request) {
