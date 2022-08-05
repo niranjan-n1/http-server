@@ -13,12 +13,7 @@ import (
 	"http-server/users"
 )
 
-func initLog(f *os.File) {
-	log.SetOutput(f)
-	log.SetLevel(log.DebugLevel)
-	log.SetReportCaller(true)
-	log.SetFormatter(&log.JSONFormatter{})
-}
+var serverName string
 
 func main() {
 	logfile, err := os.OpenFile("server.log", os.O_CREATE|os.O_RDWR, 0666)
@@ -32,13 +27,13 @@ func main() {
 	r.HandleFunc("/users", listUsers).Methods("GET")
 	r.HandleFunc("/user", addUser).Methods("POST")
 	r.HandleFunc("/user/{id}", deleteUser).Methods("DELETE")
-	portNumber := os.Getenv("PORT_NUM")
-	if portNumber == "" {
-		portNumber = "8081"
+	serverName = os.Getenv("SERVER_NAME")
+	if serverName == "" {
+		serverName = "Default server"
 	}
-	log.Debugln("Starting Server on Port ", portNumber)
-	fmt.Println("Starting Server on Port", portNumber)
-	log.Fatal(http.ListenAndServe(":"+portNumber, r))
+	log.Debugln("Starting Server on Port 8081 on", serverName)
+	fmt.Println("Starting Server on Port 8081 on", serverName)
+	log.Fatal(http.ListenAndServe(":8081", r))
 }
 
 func testHandler(w http.ResponseWriter, r *http.Request) {
@@ -83,4 +78,11 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 	json.NewEncoder(w).Encode("User deleted successfully")
 
+}
+
+func initLog(f *os.File) {
+	log.SetOutput(f)
+	log.SetLevel(log.DebugLevel)
+	log.SetReportCaller(true)
+	log.SetFormatter(&log.JSONFormatter{})
 }
