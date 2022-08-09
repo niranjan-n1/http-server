@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace : {{ .Values.deployment.namespace }}
+  labels:
+    app : {{ .Values.deployment.name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app : {{ .Values.deployment.name }}
+  template:
+    metadata:
+      labels:
+        app : {{ .Values.deployment.name }}
+    spec:
+      containers:
+      - name: {{ .Values.deployment.name }}
+        image: {{ .Values.image.registry }}/{{ .Values.image.name }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullpolicy }}
+        ports:
+          - containerPort: {{ .Values.ports.containerPort }}
+        env:
+          - name:  SERVER_NAME
+            valueFrom:
+              configMapKeyRef:
+                name:  server-configmap
+                key:  server-name
+        volumeMounts:
+        - name: pv-storage
+          mountPath: "/home/app/server.log"
+      volumes:
+        - name: pv-storage
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name:  my-server-service
+  namespace : {{ .Values.deployment.namespace }}
+spec:
+  selector:
+    app: {{ .Values.deployment.name }}
+  type:  LoadBalancer
+  ports:
+  - name:  server-port
+    port:  {{ .Values.ports.servicePort }}
+    targetPort:  {{ .Values.ports.containerPort }}

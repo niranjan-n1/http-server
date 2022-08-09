@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name}}-pv
+  labels:
+    type: local
+spec:
+  storageClassName: custom
+  capacity:
+    storage: {{ .Values.storage.pvSize }}
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ .Values.hostPath }}
+    type: FileOrCreate

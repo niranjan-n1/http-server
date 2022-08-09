@@ -1,0 +1,24 @@
+deployment:
+  name: my-server
+  namespace: astral
+
+replicaCount : 2
+
+image:  
+  name: niranjann1/httpserver
+  tag: 1.1
+  registry: docker.io
+  pullpolicy: IfNotPresent
+
+ports: 
+  containerPort: 8081
+  servicePort : 8081
+
+hostPath : "/var/opt/logs/server.log"
+
+appServer :
+  name: "Demo Server"
+
+storage:
+  claimSize: 40Mi
+  pvSize : 100Mi
